@@ -1,6 +1,6 @@
 using System;
 
-namespace KnifeCompany.Models
+namespace KnifeCompany.Models.ViewModels
 {
     public class ErrorViewModel
     {
