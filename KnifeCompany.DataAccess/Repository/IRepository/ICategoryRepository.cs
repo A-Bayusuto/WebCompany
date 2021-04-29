@@ -8,6 +8,5 @@ namespace KnifeCompany.DataAccess.Repository.IRepository
     public interface ICategoryRepository : IRepository<Category>
     {
         void Update(Category category);
-        //Category Get(Func<int> getValueOrDefault);
     }
 }
