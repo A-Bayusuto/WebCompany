@@ -8,7 +8,7 @@ using System.Text;
 
 namespace KnifeCompany.DataAccess.Repository
 {
-    public class CategoryRepository : Repository<Category>,  ICategoryRepository
+    public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
         private readonly ApplicationDbContext _db;
 
@@ -25,7 +25,6 @@ namespace KnifeCompany.DataAccess.Repository
             if (objFromDb != null) 
             {
                 objFromDb.Name = category.Name;
-                _db.SaveChanges();
             }
 
             
