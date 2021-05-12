@@ -25,11 +25,12 @@ namespace KnifeCompany.DataAccess.Migrations
                                     @Price float,
                                     @Status bit,
                                     @Description varchar(200),
-                                    @Picture varchar(200)
+                                    @Picture varchar(200),
+                                    @Section varchar(200)
                                     AS 
                                     BEGIN 
                                      UPDATE dbo.Products
-                                     SET  Name = @Name, Price = @Price, Status = @Status, Description = @Description, Picture = @Picture
+                                     SET  Name = @Name, Price = @Price, Status = @Status, Description = @Description, Picture = @Picture, Section = @Section
                                      WHERE  Id = @Id
                                     END");
 
@@ -45,12 +46,13 @@ namespace KnifeCompany.DataAccess.Migrations
                                    @Name varchar(100),
                                    @Price float,
                                    @Status bit,
+                                   @Section varchar(200),
                                    @Description varchar(200),
                                    @Picture varchar(200)
                                    AS 
                                    BEGIN 
-                                    INSERT INTO dbo.Products(Name, Price, Status, Description, Picture)
-                                    VALUES (@Name, @Price, @Status, @Description, @Picture)
+                                    INSERT INTO dbo.Products(Name, Price, Status, Section, Description, Picture)
+                                    VALUES (@Name, @Price, @Status, @Section, @Description, @Picture)
                                    END");
         }
 

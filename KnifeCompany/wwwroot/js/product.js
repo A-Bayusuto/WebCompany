@@ -27,7 +27,10 @@ function loadDataTable() {
             },
 
             {
-                "data": "picture", "width": "20%"
+                "data": "picture", "width": "10%"
+            },
+            {
+                "data": "section", "width": "10%"
             },
 
 

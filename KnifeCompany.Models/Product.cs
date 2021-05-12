@@ -22,6 +22,8 @@ namespace KnifeCompany.Models
 
         [Required]
         public Boolean Status { get; set; }
+
+        public String Section { get; set; } // Category of Product
         public String Description { get; set; }
         public String Picture { get; set; }
 

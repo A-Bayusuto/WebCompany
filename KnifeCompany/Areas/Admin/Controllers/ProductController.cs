@@ -2,6 +2,7 @@
 using KnifeCompany.DataAccess.Repository.IRepository;
 using KnifeCompany.Models;
 using KnifeCompany.Utility;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace KnifeCompany.Areas.Admin.Controllers
     {
 
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ProductController(IUnitOfWork unitOfWork)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment hostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _hostEnvironment = hostEnvironment;
         }
 
 
@@ -61,6 +64,8 @@ namespace KnifeCompany.Areas.Admin.Controllers
                 parameter.Add("@Status", product.Status);
                 parameter.Add("@Description", product.Description);
                 parameter.Add("@Picture", product.Picture);
+                parameter.Add("@Section", product.Section);
+
                 if (product.Id == 0)
                 {
                     _unitOfWork.SP_Call.Execute(SD.Proc_Products_Create, parameter);
