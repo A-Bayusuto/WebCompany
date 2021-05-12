@@ -1,5 +1,7 @@
-﻿using KnifeCompany.DataAccess.Repository.IRepository;
+﻿using Dapper;
+using KnifeCompany.DataAccess.Repository.IRepository;
 using KnifeCompany.Models;
+using KnifeCompany.Utility;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -34,7 +36,10 @@ namespace KnifeCompany.Areas.Admin.Controllers
                 return View(product);
             }
             // this is for edit
-            product = _unitOfWork.Product.Get(id.GetValueOrDefault());
+            var parameter = new DynamicParameters();
+            parameter.Add("@Id", id);
+            //retrieve object
+            product = _unitOfWork.SP_Call.OneRecord<Product>(SD.Proc_Products_Get, parameter); 
             if (product == null)
             {
                 return NotFound();
@@ -50,13 +55,20 @@ namespace KnifeCompany.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var parameter = new DynamicParameters();
+                parameter.Add("@Name", product.Name);
+                parameter.Add("@Price", product.Price);
+                parameter.Add("@Status", product.Status);
+                parameter.Add("@Description", product.Description);
+                parameter.Add("@Picture", product.Picture);
                 if (product.Id == 0)
                 {
-                    _unitOfWork.Product.Add(product);
+                    _unitOfWork.SP_Call.Execute(SD.Proc_Products_Create, parameter);
                 }
                 else
                 {
-                    _unitOfWork.Product.Update(product);
+                    parameter.Add("@Id", product.Id);
+                    _unitOfWork.SP_Call.Execute(SD.Proc_Products_Update, parameter);
                 }
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
@@ -70,19 +82,22 @@ namespace KnifeCompany.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var allObj = _unitOfWork.Product.GetAll();
+            var allObj = _unitOfWork.SP_Call.List<Product>(SD.Proc_Products_GetAll, null);
             return Json(new { data = allObj });
         }
 
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var objFromDb = _unitOfWork.Product.Get(id);
+            var parameter = new DynamicParameters();
+            parameter.Add("@Id", id);
+            //retrieve object
+            var objFromDb = _unitOfWork.SP_Call.OneRecord<Product>(SD.Proc_Products_Get, parameter);
             if (objFromDb == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-            _unitOfWork.Product.Remove(objFromDb);
+            _unitOfWork.SP_Call.Execute(SD.Proc_Products_Delete, parameter);
             _unitOfWork.Save();
             return Json(new { success = true, message = "Delete Successful" });
 
