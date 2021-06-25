@@ -1,9 +1,9 @@
-﻿using Dapper;
-using KnifeCompany.DataAccess.Repository.IRepository;
+﻿using KnifeCompany.DataAccess.Repository.IRepository;
 using KnifeCompany.Models;
-using KnifeCompany.Utility;
+using KnifeCompany.Models.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +22,7 @@ namespace KnifeCompany.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
             _hostEnvironment = hostEnvironment;
+
         }
 
 
@@ -32,23 +33,30 @@ namespace KnifeCompany.Areas.Admin.Controllers
 
         public IActionResult Upsert(int? id)
         {
-            Product product = new Product();
+            ProductVM productVM = new ProductVM()
+            {
+                Product = new Product(),
+                CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+
+
             if (id == null)
             {
                 // this is for create
-                return View(product);
+                return View(productVM);
             }
             // this is for edit
-            var parameter = new DynamicParameters();
-            parameter.Add("@Id", id);
-            //retrieve object
-            product = _unitOfWork.SP_Call.OneRecord<Product>(SD.Proc_Products_Get, parameter); 
-            if (product == null)
+            productVM.Product = _unitOfWork.Product.Get(id.GetValueOrDefault());
+            if (productVM.Product == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(productVM);
         }
 
         [HttpPost]
@@ -58,22 +66,13 @@ namespace KnifeCompany.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var parameter = new DynamicParameters();
-                parameter.Add("@Name", product.Name);
-                parameter.Add("@Price", product.Price);
-                parameter.Add("@Status", product.Status);
-                parameter.Add("@Description", product.Description);
-                parameter.Add("@Picture", product.Picture);
-                parameter.Add("@Section", product.Section);
-
                 if (product.Id == 0)
                 {
-                    _unitOfWork.SP_Call.Execute(SD.Proc_Products_Create, parameter);
+                    _unitOfWork.Product.Add(product);
                 }
                 else
                 {
-                    parameter.Add("@Id", product.Id);
-                    _unitOfWork.SP_Call.Execute(SD.Proc_Products_Update, parameter);
+                    _unitOfWork.Product.Update(product);
                 }
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
@@ -87,22 +86,19 @@ namespace KnifeCompany.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var allObj = _unitOfWork.SP_Call.List<Product>(SD.Proc_Products_GetAll, null);
+            var allObj = _unitOfWork.Product.GetAll(includeProperties:"Category");
             return Json(new { data = allObj });
         }
 
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var parameter = new DynamicParameters();
-            parameter.Add("@Id", id);
-            //retrieve object
-            var objFromDb = _unitOfWork.SP_Call.OneRecord<Product>(SD.Proc_Products_Get, parameter);
+            var objFromDb = _unitOfWork.Product.Get(id);
             if (objFromDb == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-            _unitOfWork.SP_Call.Execute(SD.Proc_Products_Delete, parameter);
+            _unitOfWork.Product.Remove(objFromDb);
             _unitOfWork.Save();
             return Json(new { success = true, message = "Delete Successful" });
 

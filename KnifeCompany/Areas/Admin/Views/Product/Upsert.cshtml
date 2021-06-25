@@ -1,4 +1,4 @@
-﻿@model KnifeCompany.Models.Product
+﻿@model KnifeCompany.Models.ViewModels.ProductVM
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,10 +8,11 @@
 <form method="post">
     <div class="row p-3 border">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (Model.Id != 0)
+        @if (Model.Product.Id != 0)
         {
             //edit
             title = "Edit Product";
+            <input type="hidden" asp-for="Product.Id" />
         }
         <div class="col-12 border-bottom">
             <h2 class="text-primary">@title</h2>
@@ -19,58 +20,58 @@
         <div class="col-8 pt-4">
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Name"></label>
+                    <label asp-for="Product.Name"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <input asp-for="Product.Name" class="form-control" />
+                    <span asp-validation-for="Product.Name" class="text-danger"></span>
                 </div>
 
                 <div class="col-4">
-                    <label asp-for="Price"></label>
+                    <label asp-for="Product.Price"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Price" class="form-control" />
-                    <span asp-validation-for="Price" class="text-danger"></span>
+                    <input asp-for="Product.Price" class="form-control" />
+                    <span asp-validation-for="Product.Price" class="text-danger"></span>
                 </div>
 
                 <div class="col-4">
-                    <label asp-for="Status"></label>
+                    <label asp-for="Product.Status"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Status" class="form-control" />
-                    <span asp-validation-for="Status" class="text-danger"></span>
+                    <input asp-for="Product.Status" class="form-control" />
+                    <span asp-validation-for="Product.Status" class="text-danger"></span>
                 </div>
 
                 <div class="col-4">
-                    <label asp-for="Description"></label>
+                    <label asp-for="Product.Description"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Description" class="form-control" />
-                    <span asp-validation-for="Description" class="text-danger"></span>
+                    <input asp-for="Product.Description" class="form-control" />
+                    <span asp-validation-for="Product.Description" class="text-danger"></span>
                 </div>
 
                 <div class="col-4">
-                    <label asp-for="Picture"></label>
+                    <label asp-for="Product.Picture"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Picture" class="form-control" />
-                    <span asp-validation-for="Picture" class="text-danger"></span>
+                    <input asp-for="Product.Picture" class="form-control" />
+                    <span asp-validation-for="Product.Picture" class="text-danger"></span>
                 </div>
 
                 <div class="col-4">
-                    <label asp-for="Section"></label>
+                    <label asp-for="Product.Section"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Section" class="form-control" />
-                    <span asp-validation-for="Section" class="text-danger"></span>
+                    <input asp-for="Product.Section" class="form-control" />
+                    <span asp-validation-for="Product.Section" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-8 offset-4">
-                    @if (Model.Id != 0)
+                    @if (Model.Product.Id != 0)
                     {
-                        <partial name="_EditAndBackToListButton" model="Model.Id" />
+                        <partial name="_EditAndBackToListButton" model="Model.Product.Id" />
                     }
                     else
                     {
