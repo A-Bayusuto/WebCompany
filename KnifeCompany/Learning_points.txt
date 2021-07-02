@@ -64,3 +64,105 @@ function loadDataTable() {
 
 
   swal => sweet alert
+
+
+  https://www.udemy.com/course/complete-aspnet-core-21-course/learn/lecture/17695488#overview
+  to make description nicer
+
+
+
+  function loadDataTable() {
+    dataTable = $('#tblData').DataTable({
+        "ajax": {
+            "url": "/Admin/Product/GetAll"
+        },
+        "columns": [
+            {
+                "data": "name", "width": "20%"
+            },
+
+            {
+                "data": "price", "width": "10%"
+            },
+
+            {
+                "data": "status", "width": "10%"
+            },
+
+            {
+                "data": "description", "width": "20%"
+            },
+
+            {
+                "data": "picture", "width": "10%"
+            },
+            {
+                "data": "category.name", "width": "10%"
+            },
+
+
+            vs
+
+  function loadDataTable() {
+    dataTable = $('#tblData').DataTable({
+        "ajax": {
+            "url": "/Admin/Product/GetAll"
+        },
+        "columns": [
+            {
+                "data": "name", "width": "20%"
+            },
+
+            {
+                "data": "price", "width": "10%"
+            },
+
+            {
+                "data": "status", "width": "10%"
+            },
+
+            {
+                "data": "description", "width": "20%"
+            },
+
+            {
+                "data": "picture", "width": "10%"
+            },
+            {
+                "data": "category.Name", "width": "10%"         // wrong even though capital
+            },
+
+
+
+
+
+
+
+
+
+
+<script>
+    function validateInput() {
+        if (document.getElementById("uploadBox").value = "") {      WRONG ==, CAUSED THE INPUT FILE NOT TO BE READ IN CONTROLLER
+            swal("Error", "Please select an image", "error");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+vs
+
+<script>
+    function validateInput() {
+        if (document.getElementById("uploadBox").value == "") {
+            swal("Error", "Please select an image", "error");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+
+section 9 
+108. 2:49 COMMON ERROR THAT OCCURRED

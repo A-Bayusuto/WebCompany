@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace KnifeCompany.Models
@@ -23,7 +24,12 @@ namespace KnifeCompany.Models
         [Required]
         public Boolean Status { get; set; }
 
-        public String Section { get; set; } // Category of Product
+        [Required]
+        public int CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; } // Category of Product
+
         public String Description { get; set; }
         public String Picture { get; set; }
 

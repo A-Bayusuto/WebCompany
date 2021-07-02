@@ -30,7 +30,7 @@ function loadDataTable() {
                 "data": "picture", "width": "10%"
             },
             {
-                "data": "section", "width": "10%"
+                "data": "category.name", "width": "10%"
             },
 
 

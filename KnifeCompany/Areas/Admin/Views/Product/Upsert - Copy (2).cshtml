@@ -2,7 +2,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var title = "Create Product";
+    var title = "Create Product"; 
 }
 
 <form method="post" enctype="multipart/form-data">
@@ -47,14 +47,23 @@
                     <label asp-for="Product.Description"></label>
                 </div>
                 <div class="col-8">
-                    <textarea asp-for="Product.Description" class="form-control"></textarea>
+                    <input asp-for="Product.Description" class="form-control" />
+                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                </div>
+
+                <div class="col-4">
+                    <label asp-for="Product.Picture"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Product.Picture" class="form-control" />
+                    <span asp-validation-for="Product.Picture" class="text-danger"></span>
                 </div>
 
                 <div class="col-4">
                     <label>Category</label>
                 </div>
                 <div class="col-8">
-                    @Html.DropDownListFor(m => m.Product.CategoryId, Model.CategoryList ?? new List<SelectListItem>(), "- Select a Category,",
+                    @Html.DropDownListFor(m => m.Product.CategoryId, Model.CategoryList, "-Select a Category,",
                    new { @class = "form-control" })
                     <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
                 </div>
@@ -74,48 +83,31 @@
                     }
                     else
                     {
-                        <div class="row">
-                            <div class="col">
-                                <button type="submit" onclick="return validateInput()" class="btn btn-primary form-control">Create</button>
-                            </div>
-                            <div class="col">
-                                <a asp-action="Index" class="btn btn-success form-control">Back To List</a>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" onclick="return validateInput()" class="btn btn-primary form-control">Create</button>
+                    </div>
+                    <div class="col">
+                        <a asp-action="Index" class="btn btn-success form-control">Back To List</a>
+                    </div>
+                </div>
 
                     }
                 </div>
             </div>
         </div>
-
-        @if (Model.Product.Id != 0)
-        {
-            <div class="col-3 offset-1">
-                <img src="@Model.Product.Picture" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
-            </div>
-        }
     </div>
 </form>
 
 
-@section Scripts{
-    <partial name="_ValidationScriptsPartial" />
+@section Scripts{ 
+<partial name="_ValidationScriptsPartial" />
 }
 
 
-<script src="https://cdn.tiny.cloud/1/kcc4hntvndp5ugzsgcivtso2xyoqhgx7q4z40v7a46yhf42h/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-
-<script>
-    tinymce.init({
-        selector: 'textarea',
-        plugins: 'lists',
-        menubar: 'file edit format'
-    })
-</script>
-
 <script>
     function validateInput() {
-        if (document.getElementById("uploadBox").value == "") {
+        if (document.getElementById("uploadBox").value = "") {
             swal("Error", "Please select an image", "error");
             return false;
         }

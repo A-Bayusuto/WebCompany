@@ -24,11 +24,16 @@ namespace KnifeCompany.DataAccess.Repository
 
             if (objFromDb != null) 
             {
+                if(product.Picture != null)
+                {
+                    objFromDb.Picture = product.Picture;
+                }
+
                 objFromDb.Name = product.Name;
                 objFromDb.Price = product.Price;
                 objFromDb.Status = product.Status;
                 objFromDb.Description = product.Description;
-                objFromDb.Picture = product.Picture;
+                objFromDb.Category = product.Category;
 
             }
 
