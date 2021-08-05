@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +20,10 @@ namespace KnifeCompany.Models
 
         public string Postal { get; set; }
 
+        public int? CompanyId { get; set; }
+
+        [ForeignKey("CompanyId")]
+        public Company company { get; set; }
 
         [NotMapped]
 
@@ -29,3 +33,6 @@ namespace KnifeCompany.Models
 
     }
 }
+
+
+// int? to make nullable
