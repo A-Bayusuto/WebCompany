@@ -166,3 +166,19 @@ vs
 
 section 9 
 108. 2:49 COMMON ERROR THAT OCCURRED
+
+
+
+
+
+
+
+
+
+
+Error CS0234
+<TargetFramework>net5.0</TargetFramework>
+
+NOT
+
+<TargetFramework>netcoreapp3.1</TargetFramework>

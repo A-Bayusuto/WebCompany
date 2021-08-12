@@ -23,7 +23,7 @@ namespace KnifeCompany.Models
         public int? CompanyId { get; set; }
 
         [ForeignKey("CompanyId")]
-        public Company company { get; set; }
+        public Company Company { get; set; }
 
         [NotMapped]
 
