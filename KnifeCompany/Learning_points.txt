@@ -170,8 +170,8 @@ section 9
 
 
 
-
-
+https://stackoverflow.com/questions/6389437/explanation-of-int-vs-int/6389815
+https://stackoverflow.com/questions/556133/whats-the-in-front-of-a-string-in-c
 
 
 

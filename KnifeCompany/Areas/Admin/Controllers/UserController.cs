@@ -1,10 +1,12 @@
-﻿using KnifeCompany.DataAccess.Repository.IRepository;
+﻿using KnifeCompany.DataAccess.Data;
+using KnifeCompany.DataAccess.Repository.IRepository;
 using KnifeCompany.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace KnifeCompany.Areas.Admin.Controllers
 {
@@ -12,11 +14,11 @@ namespace KnifeCompany.Areas.Admin.Controllers
     public class UserController : Controller
     {
 
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ApplicationDbContext _db;
 
-        public UserController(IUnitOfWork unitOfWork)
+        public UserController(ApplicationDbContext db)
         {
-            _unitOfWork = unitOfWork;
+            _db = db;
         }
 
 
@@ -25,68 +27,60 @@ namespace KnifeCompany.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Upsert(int? id)
-        {
-            User user = new User();
-            if (id == null)
-            {
-                // this is for create
-                return View(user);
-            }
-            // this is for edit
-            user = _unitOfWork.User.Get(id.GetValueOrDefault());
-            if (user == null)
-            {
-                return NotFound();
-            }
 
-            return View(user);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public IActionResult Upsert(User user)
-        {
-            if (ModelState.IsValid)
-            {
-                if (user.Id == 0)
-                {
-                    _unitOfWork.User.Add(user);
-                }
-                else
-                {
-                    _unitOfWork.User.Update(user);
-                }
-                _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
 
 
         #region API CALLS
 
         [HttpGet]
         public IActionResult GetAll()
-        {
-            var allObj = _unitOfWork.User.GetAll();
-            return Json(new { data = allObj });
+        {   
+            // fetch all the users
+            var userList = _db.ApplicationUsers.Include(u => u.Company).ToList();
+            var userRole = _db.UserRoles.ToList();
+            var roles = _db.Roles.ToList();
+
+
+            // for each user, assigns their roles form roles table
+            foreach (var user in userList)
+            {
+                var roleId = userRole.FirstOrDefault(u => u.UserId == user.Id).RoleId;
+                user.Role = roles.FirstOrDefault(u => u.Id == roleId).Name;
+
+                if (user.Company == null)
+                {
+                    user.Company = new Company
+                    {
+                        Name = ""
+                    };
+                }
+            }
+            // userlist updated and can be sent by Json for JS to use for table
+            return Json(new { data = userList });
         }
 
-        [HttpDelete]
-        public IActionResult Delete(int id)
+        [HttpPost]
+
+        public IActionResult LockUnlock([FromBody] string id)
         {
-            var objFromDb = _unitOfWork.User.Get(id);
+            var objFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
             if (objFromDb == null)
             {
-                return Json(new { success = false, message = "Error while deleting" });
+                return Json(new { success = false, message = "Error while Locking/Unlocking" });
             }
-            _unitOfWork.User.Remove(objFromDb);
-            _unitOfWork.Save();
-            return Json(new { success = true, message = "Delete Successful" });
-
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now){
+                // user is locked, we will unlock them
+                objFromDb.LockoutEnd = DateTime.Now;
+            }
+            else
+            {
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
+            }
+            _db.SaveChanges();
+            return Json(new { success = true, message = "Operation Success" });
         }
+
+
 
         #endregion
     }
