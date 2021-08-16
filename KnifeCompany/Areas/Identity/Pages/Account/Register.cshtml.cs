@@ -113,9 +113,9 @@ namespace KnifeCompany.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser 
-                { 
-                    UserName = Input.Email, 
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
                     Email = Input.Email,
                     Name = Input.Name,
                     StreetAddress = Input.StreetAddress,
@@ -123,7 +123,8 @@ namespace KnifeCompany.Areas.Identity.Pages.Account
                     State = Input.State,
                     PostalCode = Input.PostalCode,
                     PhoneNumber = Input.PhoneNumber,
-                    Role = Input.Role
+                    Role = Input.Role,
+                    CompanyId = Input.CompanyId
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
