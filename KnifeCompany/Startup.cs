@@ -52,11 +52,6 @@ namespace KnifeCompany
                 options.LogoutPath = $"/Identity/Account/Logout";
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
-            services.AddAuthentication().AddGoogle(options =>
-            {
-                options.ClientId = "123597101408-vlvhs3td7ntu5bq0hpvhtbhrbltrgnvh.apps.googleusercontent.com";
-                options.ClientSecret = "BmXWj2Vj4rk3FBx4FY866Nwu";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
