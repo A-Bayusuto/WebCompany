@@ -1,6 +1,7 @@
 using KnifeCompany.DataAccess.Data;
 using KnifeCompany.DataAccess.Repository;
 using KnifeCompany.DataAccess.Repository.IRepository;
+using KnifeCompany.Models;
 using KnifeCompany.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,7 +41,6 @@ namespace KnifeCompany
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddSingleton<IEmailSender, EmailSender>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -51,6 +51,25 @@ namespace KnifeCompany
                 options.LoginPath = $"/Identity/Account/Login";
                 options.LogoutPath = $"/Identity/Account/Logout";
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+
+            //services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<AppSettings>(options =>
+            {
+                //options.SmtpHost = "smtp.gmail.com";
+                //options.SmtpPort = 587;
+                //options.SmtpUser = "alexanderwanengkirtyo@gmail.com";
+                //options.SmtpPass = "Paladins1";
+                //options.Sender_Email = "noreply@mytest.com";
+                //options.Sender_Name = "abw";
+
+                options.SmtpHost = Configuration["ExternalProviders:MailKit:SMTP:Address"];
+                options.SmtpPort = Convert.ToInt32(Configuration["ExternalProviders:MailKit:SMTP:Port"]);
+                options.SmtpUser = Configuration["ExternalProviders:MailKit:SMTP:Account"];
+                options.SmtpPass = Configuration["ExternalProviders:MailKit:SMTP:Password"];
+                options.Sender_Email = Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"];
+                options.Sender_Name = Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
             });
         }
 

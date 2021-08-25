@@ -1,1 +1,7 @@
 ﻿product model: add discount price
+
+DELETE SQL query:
+DELETE FROM [aspnet-KnifeCompany-7E7FA7EB-AF0D-4F9F-9F93-CACBCB6CD409].[dbo].[AspNetUsers] WHERE Email = 'abwanengkirtyo@gmail.com';
+
+sendinblue
+API key: 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
