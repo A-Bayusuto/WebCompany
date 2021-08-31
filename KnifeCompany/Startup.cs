@@ -54,6 +54,12 @@ namespace KnifeCompany
             });
 
             //services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddAuthentication().AddGoogle(options =>
+            {
+                options.ClientId = "821004543999-346j6hdhbvjf2t988du3hopunu8ro6hj.apps.googleusercontent.com";
+                options.ClientSecret = "kmkHy06-XT7KHQng5gTC7kUO";
+            });
+
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AppSettings>(options =>
             {
