@@ -9,6 +9,9 @@ namespace KnifeCompany.DataAccess.Repository.IRepository
         ICategoryRepository Category { get; }
         ICompanyRepository Company { get; }
         IProductRepository Product { get; }
+        IOrderDetailsRepository OrderDetails { get; }
+        IOrderHeaderRepository OrderHeader { get; }
+        IShoppingCartRepository ShoppingCart { get; }
         IApplicationUserRepository ApplicationUser { get; }
         ISP_Call SP_Call { get; }
 
