@@ -60,6 +60,13 @@ namespace KnifeCompany
                 options.ClientSecret = "kmkHy06-XT7KHQng5gTC7kUO";
             });
 
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AppSettings>(options =>
             {
@@ -77,6 +84,8 @@ namespace KnifeCompany
                 options.Sender_Email = Configuration["ExternalProviders:MailKit:SMTP:SenderEmail"];
                 options.Sender_Name = Configuration["ExternalProviders:MailKit:SMTP:SenderName"];
             });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -97,6 +106,7 @@ namespace KnifeCompany
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthentication();
             app.UseAuthorization();

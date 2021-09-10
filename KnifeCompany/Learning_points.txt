@@ -182,3 +182,55 @@ Error CS0234
 NOT
 
 <TargetFramework>netcoreapp3.1</TargetFramework>
+
+
+.ToString("c") Currency Format
+
+
+To reset:
+1. Delete Database on sql server
+2. Delete migrations
+3. Rebuild
+
+if a database object is editted and then saved, it will be updated automatically
+eg.
+
+cartFromDb.Count += addObject.Count;
+//_unitOfWork.ShoppingCart.Update(cartFromDb);
+
+_unitOfWork.Save();
+
+
+To set Identity Folder: (Section 11 123)
+1. Right-Click project
+2. New Scaffolded Items
+3. Identity Sidebar
+4. Override all pages
+5. Set Data Context Class 
+
+
+
+
+To get logged in username:
+eg. CartController
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // will give the user's userId
+            //var userName = User.FindFirstValue(ClaimTypes.Name); // will give the user's userName
+
+            // For ASP.NET Core >= 5.0
+            //var userEmail = User.FindFirstValue(ClaimTypes.Email) // will give the user's Email
+
+
+What is UnitOfWork?
+all the models have a repository/data stored in the DB. unit of work initializes.
+It holds all the classes in the model and its functions intialized with the database contents.
+Can call functions like update using unitOfWork to affect DB.
+
+
+To Remember: LIMITING DESCRIPTION LENGTH
+                if (list.Product.Description.Length > 100)  // limiting length of description to 100 characters
+                {
+                    list.Product.Description = list.Product.Description.Substring(0, 99) + "...";
+                }

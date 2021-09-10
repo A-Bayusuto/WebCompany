@@ -16,6 +16,8 @@ namespace KnifeCompany.Models
         public string ApplicationId { get; set; }
         [ForeignKey("ApplicationUserId")]
 
+        public ApplicationUser ApplicationUser { get; set; }
+
         [Required]
         public DateTime OrderDate { get; set; }
         [Required]

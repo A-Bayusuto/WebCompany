@@ -17,7 +17,7 @@
 
                             </div>
 
-                            <p class="card-title text-primary">
+                            <p class="card-title text-primary" hidden>
                                 <b id="stock">@product.Price</b>
                             </p>
 
@@ -38,7 +38,7 @@
                                 </div>*@
                         </div>
                         <div>
-                            <a asp-action="Details" class="btn btn-primary form-control" asp-route-id="@product.Id">Details</a>
+                            <a class="btn btn-primary form-control" asp-route-id="@product.Id" asp-action="Details" >Details</a>
                         </div>
                     </div>
                 </div>
