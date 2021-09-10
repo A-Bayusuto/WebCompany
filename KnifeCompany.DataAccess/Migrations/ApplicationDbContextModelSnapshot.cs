@@ -95,7 +95,7 @@ namespace KnifeCompany.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDeatails");
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("KnifeCompany.Models.OrderHeader", b =>

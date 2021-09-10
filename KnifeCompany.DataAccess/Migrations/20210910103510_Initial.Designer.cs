@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KnifeCompany.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210910085349_changedOrderHeader")]
-    partial class changedOrderHeader
+    [Migration("20210910103510_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,7 +97,7 @@ namespace KnifeCompany.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDeatails");
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("KnifeCompany.Models.OrderHeader", b =>

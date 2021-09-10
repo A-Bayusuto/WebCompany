@@ -1,0 +1,9 @@
+﻿
+
+
+
+
+
+
+
+1.picture in details out of bounds

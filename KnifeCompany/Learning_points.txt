@@ -192,6 +192,13 @@ To reset:
 2. Delete migrations
 3. Rebuild
 
+To create Admin:
+1. Add any user => initially roles are not created yet. will be made after first register
+2. Go to Areas/Identity/Account/Register
+3. Edit so can pick roles without being admin
+4. Register account that should be the Admin
+
+
 if a database object is editted and then saved, it will be updated automatically
 eg.
 

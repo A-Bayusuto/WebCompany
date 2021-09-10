@@ -42,7 +42,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
             ShoppingCartVM = new ShoppingCartVM()
             {
                 OrderHeader = new Models.OrderHeader(),
-                ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value)
+                ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "Product")
             };
             ShoppingCartVM.OrderHeader.OrderTotal = 0;
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
