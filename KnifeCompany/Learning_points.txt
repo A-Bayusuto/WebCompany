@@ -3,6 +3,8 @@
 vs
 <partial name="_ValidationScriptsPartial" />
 
+==================================================================================================================================
+==================================================================================================================================
 
 javascript flaw
 
@@ -61,7 +63,8 @@ function loadDataTable() {
     });
 
   
-
+==================================================================================================================================
+==================================================================================================================================
 
   swal => sweet alert
 
@@ -69,7 +72,8 @@ function loadDataTable() {
   https://www.udemy.com/course/complete-aspnet-core-21-course/learn/lecture/17695488#overview
   to make description nicer
 
-
+==================================================================================================================================
+==================================================================================================================================
 
   function loadDataTable() {
     dataTable = $('#tblData').DataTable({
@@ -136,7 +140,8 @@ function loadDataTable() {
 
 
 
-
+==================================================================================================================================
+==================================================================================================================================
 
 
 
@@ -173,7 +178,8 @@ section 9
 https://stackoverflow.com/questions/6389437/explanation-of-int-vs-int/6389815
 https://stackoverflow.com/questions/556133/whats-the-in-front-of-a-string-in-c
 
-
+==================================================================================================================================
+==================================================================================================================================
 
 
 Error CS0234
@@ -183,9 +189,13 @@ NOT
 
 <TargetFramework>netcoreapp3.1</TargetFramework>
 
+==================================================================================================================================
+==================================================================================================================================
 
 .ToString("c") Currency Format
 
+==================================================================================================================================
+==================================================================================================================================
 
 To reset:
 1. Delete Database on sql server
@@ -198,6 +208,8 @@ To create Admin:
 3. Edit so can pick roles without being admin
 4. Register account that should be the Admin
 
+==================================================================================================================================
+==================================================================================================================================
 
 if a database object is editted and then saved, it will be updated automatically
 eg.
@@ -208,6 +220,9 @@ cartFromDb.Count += addObject.Count;
 _unitOfWork.Save();
 
 
+==================================================================================================================================
+==================================================================================================================================
+
 To set Identity Folder: (Section 11 123)
 1. Right-Click project
 2. New Scaffolded Items
@@ -216,7 +231,8 @@ To set Identity Folder: (Section 11 123)
 5. Set Data Context Class 
 
 
-
+==================================================================================================================================
+==================================================================================================================================
 
 To get logged in username:
 eg. CartController
@@ -230,14 +246,76 @@ eg. CartController
             //var userEmail = User.FindFirstValue(ClaimTypes.Email) // will give the user's Email
 
 
+==================================================================================================================================
+==================================================================================================================================
+
 What is UnitOfWork?
 all the models have a repository/data stored in the DB. unit of work initializes.
 It holds all the classes in the model and its functions intialized with the database contents.
 Can call functions like update using unitOfWork to affect DB.
 
 
+==================================================================================================================================
+==================================================================================================================================
+
 To Remember: LIMITING DESCRIPTION LENGTH
                 if (list.Product.Description.Length > 100)  // limiting length of description to 100 characters
                 {
                     list.Product.Description = list.Product.Description.Substring(0, 99) + "...";
                 }
+
+
+
+==================================================================================================================================
+==================================================================================================================================
+
+Button is also index but button is a submit type. so needs HttpPost and set ActionName
+
+        [HttpPost]
+        [ActionName("Index")]
+        public async Task<IActionResult> IndexPOST()
+        {
+            //string returnUrl = Url.Content("~/");
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var user = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value);
+
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Verification email empty");
+            }
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Page(
+                "/Account/ConfirmEmail",
+                pageHandler: null,
+                //values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+                values: new { area = "Identity", userId = user.Id, code = code},
+                protocol: Request.Scheme);
+
+            await _emailSender.SendEmailAsync(user.Email, "Confirm your email",
+                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+            ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email");
+            return RedirectToAction("Index");
+        }
+
+==================================================================================================================================
+==================================================================================================================================
+
+asp-route-id OR
+asp-route-cartId
+
+asp-route => .net thing
+-xxx => variable used in controller
+
+eg.
+
+<button type="submit" asp-route-id="@item.Product.Id" asp-action="MinusProduct">
+public IActionResult MinusProduct(int id)
+
+
+==================================================================================================================================
+==================================================================================================================================
+

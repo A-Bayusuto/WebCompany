@@ -1,4 +1,5 @@
 ﻿@model KnifeCompany.Models.ViewModels.ShoppingCartVM
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,73 +8,113 @@
 
 <form method="post">
     <br />
-    <div class="backgroundWhiteBorder">
-        <div class="container">
-            <div class="card">
-                <div class="card-header bg-dark text-light ml-0 row container">
-                    <div class="col-6">
-                        <i class="fa fa-shopping-cart"></i> &nbsp;
-                        Shopping Cart
-                    </div>
-                    <div class="col-6 text-right">
-                        <a class="btn btn-outline-info btn-sm">Continue Shopping</a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="d-none d-lg-block col-lg-1 text-center py-2">
-                            <img src="https://via.placeholder.com/150" class="rounded" width="100%" />
+    @if (Model.ListCart.Count() > 0)
+    {
+        var cartTotal = 0.00;
+
+        <div class="backgroundWhiteBorder">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header bg-dark text-light ml-0 row container">
+                        <div class="col-6">
+                            <i class="fa fa-shopping-cart"></i> &nbsp;
+                            Shopping Cart
                         </div>
-                        <div class="col-12 text-sm-center col-lg-6 text-lg-left">
-                            <h5><strong>--TITLE--</strong></h5>
-                            <p><small>--DESCRIPTION--</small></p>
+                        <div class="col-6 text-right">
+                            <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-outline-info btn-sm">Continue Shopping</a>
                         </div>
-                        <div class="col-12 text-sm-center col-lg-5 text-lg-right row">
-                            <div class="col-4 text-md-right" style="padding-top:5px;">
-                                <h6><strong>--Price --<span class="text-muted">x</span> --Count-- </strong></h6>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var item in Model.ListCart)
+                        {
+
+                            var itemTotal = item.Product.Price * item.Count;
+                            cartTotal += itemTotal;
+
+                            <div class="row">
+                                <div class="d-none d-lg-block col-lg-1 text-center py-2">
+                                    <img src=@item.Product.Picture class="rounded" width="100%" />
+                                </div>
+                                <div class="col-12 text-sm-center col-lg-6 text-lg-left">
+
+                                    <a style="color:black" asp-route-id="@item.Product.Id" asp-action="Details"><h5><strong>@item.Product.Name</strong></h5></a>
+                                    <p><small>@item.Product.Description</small></p>
+                                </div>
+                                <div class="col-12 text-sm-center col-lg-5 text-lg-right row">
+                                    <div class="col-4 text-md-right" style="padding-top:5px;">
+                                        <h6><strong>@item.Product.Price.ToString("c")<span class="text-muted"> x</span> @item.Count =</strong></h6>
+                                        <h6><strong>@itemTotal.ToString("c")</strong></h6>
+                                    </div>
+                                    <div class="col-6 col-sm-4 col-lg-6">
+                                        <div class="float-right mx-1">
+                                            <button type="submit" class="btn btn-primary" asp-route-id="@item.Product.Id" asp-action="AddProduct">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="float-right mx-1">
+                                            <button type="submit" class="btn btn-danger" asp-route-id="@item.Product.Id" asp-action="MinusProduct">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 col-sm-4 col-lg-2 text-right">
+                                        <button type="submit" class="btn btn-outline-danger" asp-route-id="@item.Product.Id" asp-action="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <hr />
                             </div>
-                            <div class="col-6 col-sm-4 col-lg-6">
-                                <div class="float-right mx-1">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i>
+
+                        }
+                        <div class="row">
+                            <div class="col-12 col-md-6 offset-md-6 col-lg-4 offset-lg-8 pr-4">
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between bg-light">
+                                        <span class="text-info"> Total (USD)</span>
+                                        <strong class="text-info">$ <span id="txtOrderTotal">@Model.OrderHeader.OrderTotal.ToString("c")</span></strong>
+                                        @*<strong class="text-info">$ <span id="txtOrderTotal">@cartTotal</span></strong>*@
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-footer row">
+                            @*@if (!Model.OrderHeader.ApplicationUser.EmailConfirmed &&
+                                Model.OrderHeader.ApplicationUser.CompanyId != null &&
+                                Model.OrderHeader.ApplicationUser.Company.IsAuthorizedCompany)*@
+
+                            @if (!Model.OrderHeader.ApplicationUser.EmailConfirmed)
+                            {
+                                <div class="col-8 text-danger">
+                                    Email must be confirmed for authorized customers
+                                </div>
+                                <div class="col-4">
+                                    <button onclick="return register();" id="email_resend" type="submit" class="btn btn-outline-warning btn-sm">
+                                        Click to resend confirmation email
                                     </button>
                                 </div>
-                                <div class="float-right mx-1">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
+                            }
+                            else
+                            {
+                                <div class="col-sm-12 col-lg-4 col-md-6 offset-lg-8 offset-md-6 ">
+
+                                    <a asp-area="Customer" asp-controller="Cart" asp-action="Summary" class="btn btn-success form-control">Summary</a>
                                 </div>
-                            </div>
-                            <div class="col-2 col-sm-4 col-lg-2 text-right">
-                                <button type="submit" class="btn btn-outline-danger">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    }
-                    <div class="row">
-                        <div class="col-12 col-md-6 offset-md-6 col-lg-4 offset-lg-8 pr-4">
-                            <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between bg-light">
-                                    <span class="text-info"> Total (USD)</span>
-                                    <strong class="text-info">$ <span id="txtOrderTotal">--TOTAL--</span></strong>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div class="card-footer row">
-
-                        <div class="col-sm-12 col-lg-4 col-md-6 offset-lg-8 offset-md-6 ">
-
-                            <a class="btn btn-success form-control">Summary</a>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div> There are no items in the shopping cart</div>
+    }
 </form>
+
+@section Scripts{
+    <script src="~/js/cart.js"></script>
+}

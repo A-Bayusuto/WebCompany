@@ -64,7 +64,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
             addObject.Id = 0;
             if (ModelState.IsValid)
             {
-                // then add to card
+                // then add to cart
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
                 addObject.ApplicationUserId = claim.Value;
