@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,14 @@ namespace KnifeCompany.Areas.Customer.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<IdentityUser> _userManager;
+        public IConfiguration _configuration { get; }
 
+        public CartController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        [BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; }
 
         public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender, UserManager<IdentityUser> userManager)
@@ -52,7 +60,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
             };
             ShoppingCartVM.OrderHeader.OrderTotal = 0;
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
-                includeProperties:"Company");
+                includeProperties: "Company");
 
             foreach (var list in ShoppingCartVM.ListCart)
             {
@@ -88,7 +96,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmail",
                 pageHandler: null,
-                values: new { area = "Identity", userId = user.Id, code = code},
+                values: new { area = "Identity", userId = user.Id, code = code },
                 protocol: Request.Scheme);
 
             await _emailSender.SendEmailAsync(user.Email, "Confirm your email",
@@ -167,7 +175,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
                 Product = productFromDb,
                 ProductId = productFromDb.Id
             };
-            
+
 
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -202,7 +210,8 @@ namespace KnifeCompany.Areas.Customer.Controllers
                 _unitOfWork.ShoppingCart.Remove(cartFromDb);
                 HttpContext.Session.SetInt32(SD.ssShoppingCart, cnt - 1);
             }
-            else {
+            else
+            {
                 cartFromDb.Count -= 1;
             }
 
@@ -242,11 +251,11 @@ namespace KnifeCompany.Areas.Customer.Controllers
             {
                 OrderHeader = new Models.OrderHeader(),
                 ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value,
-                includeProperties:"Product")
-            };    
+                includeProperties: "Product")
+            };
 
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
-                includeProperties:"Company");
+                includeProperties: "Company");
 
             foreach (var list in ShoppingCartVM.ListCart)
             {
@@ -262,6 +271,67 @@ namespace KnifeCompany.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
 
             return View(ShoppingCartVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Summary")]
+        public IActionResult SummaryPOST()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
+                includeProperties: "Company");
+            ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value,
+                includeProperties: "Product");
+
+            ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
+            ShoppingCartVM.OrderHeader.ApplicationId = claim.Value;
+            ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+
+            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            _unitOfWork.Save();
+
+            List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+            foreach (var item in ShoppingCartVM.ListCart)
+            {
+                OrderDetails orderDetails = new OrderDetails()
+                {
+                    ProductId = item.ProductId,
+                    OrderId = ShoppingCartVM.OrderHeader.Id,
+                    Price = item.Price,
+                    Count = item.Count
+                };
+                ShoppingCartVM.OrderHeader.OrderTotal += orderDetails.Count * orderDetails.Price;
+                _unitOfWork.OrderDetails.Add(orderDetails);
+                _unitOfWork.Save();
+            }
+
+            _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.ListCart);
+            HttpContext.Session.SetInt32(SD.ssShoppingCart, 0);
+
+            return RedirectToAction("OrderConfirmation", "Cart", new { id = ShoppingCartVM.OrderHeader.Id });
+
+        }
+
+        public async Task<IActionResult> Checkout(double total)
+        {
+            var paypalAPI = new PayPalAPI(_configuration);
+            string url = await paypalAPI.getRedirectURLToPayPal(total, "USD");
+            return Redirect(url);
+        }
+
+
+        public IActionResult Success()
+        {
+            return View();
+        }
+
+        public IActionResult Cancel()
+        {
+            return View();
         }
 
     }

@@ -7,3 +7,12 @@
 
 
 1.picture in details out of bounds
+
+
+
+
+
+
+
+
+2. After customer finishes order => need to show orders list for admin where they can finish or not by edit
