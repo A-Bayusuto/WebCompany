@@ -27,19 +27,17 @@ namespace KnifeCompany.Areas.Customer.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         public IConfiguration _configuration { get; }
 
-        public CartController(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+
 
         [BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; }
 
-        public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender, UserManager<IdentityUser> userManager)
+        public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender, UserManager<IdentityUser> userManager, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _emailSender = emailSender;
             _userManager = userManager;
+            _configuration = configuration;
         }
 
 
@@ -276,15 +274,73 @@ namespace KnifeCompany.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Summary")]
-        public IActionResult SummaryPOST()
+        public async Task<IActionResult> SummaryPOST(double total)
+        {
+            //var claimsIdentity = (ClaimsIdentity)User.Identity;
+            //var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            //ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
+            //    includeProperties: "Company");
+            //ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value,
+            //    includeProperties: "Product");
+
+            //ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            //ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
+            //ShoppingCartVM.OrderHeader.ApplicationId = claim.Value;
+            //ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+
+            //_unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            //_unitOfWork.Save();
+
+            //List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+            //foreach (var item in ShoppingCartVM.ListCart)
+            //{
+            //    OrderDetails orderDetails = new OrderDetails()
+            //    {
+            //        ProductId = item.ProductId,
+            //        OrderId = ShoppingCartVM.OrderHeader.Id,
+            //        Price = item.Price,
+            //        Count = item.Count
+            //    };
+            //    ShoppingCartVM.OrderHeader.OrderTotal += orderDetails.Count * orderDetails.Price;
+            //    _unitOfWork.OrderDetails.Add(orderDetails);
+            //    _unitOfWork.Save();
+            //}
+
+            //_unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.ListCart);
+            //HttpContext.Session.SetInt32(SD.ssShoppingCart, 0);
+
+            //return RedirectToAction("OrderConfirmation", "Cart", new { id = ShoppingCartVM.OrderHeader.Id });
+            var paypalAPI = new PayPalAPI(_configuration);
+            string url = await paypalAPI.getRedirectURLToPayPal(total, "USD");
+            return Redirect(url);
+
+        }
+
+        public async Task<IActionResult> Checkout(double total)
+        {
+            var paypalAPI = new PayPalAPI(_configuration);
+            string url = await paypalAPI.getRedirectURLToPayPal(total, "USD");
+            return Redirect(url);
+        }
+
+
+        public IActionResult Success()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
+            ShoppingCartVM = new ShoppingCartVM()
+            {
+                OrderHeader = new Models.OrderHeader(),
+                ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value,
+                    includeProperties: "Product")
+            };
+
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
                 includeProperties: "Company");
-            ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value,
-                includeProperties: "Product");
+
+            // adds order header to table
 
             ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
             ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
@@ -293,6 +349,8 @@ namespace KnifeCompany.Areas.Customer.Controllers
 
             _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
+
+            // sets order header details
 
             List<OrderDetails> orderDetailsList = new List<OrderDetails>();
             foreach (var item in ShoppingCartVM.ListCart)
@@ -309,23 +367,13 @@ namespace KnifeCompany.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
+            // deletes user's shopping cart and updates session cart number
+
             _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.ListCart);
             HttpContext.Session.SetInt32(SD.ssShoppingCart, 0);
+            _unitOfWork.Save();
 
-            return RedirectToAction("OrderConfirmation", "Cart", new { id = ShoppingCartVM.OrderHeader.Id });
-
-        }
-
-        public async Task<IActionResult> Checkout(double total)
-        {
-            var paypalAPI = new PayPalAPI(_configuration);
-            string url = await paypalAPI.getRedirectURLToPayPal(total, "USD");
-            return Redirect(url);
-        }
-
-
-        public IActionResult Success()
-        {
+            //return RedirectToAction("OrderConfirmation", "Cart", new { id = ShoppingCartVM.OrderHeader.Id });
             return View();
         }
 

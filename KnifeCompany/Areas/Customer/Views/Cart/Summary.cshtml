@@ -7,7 +7,7 @@
 <h1>Summary</h1>
 
 
-<form method="post">
+<form method="post" asp-controller="Cart" asp-action="Summary">
     <br />
     <div class="backgroundWhiteBorder">
         <div class="container">
@@ -111,7 +111,7 @@
                             <p style="color:maroon; font-size:14px;">Estimate Arrival Date: @DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()</p>
                         </div>
                         <div class="col-12 col-md-4">
-
+                            <input type="hidden" name="total" value="@Model.OrderHeader.OrderTotal" />
                             <button type="submit" value="Place Order" class="btn btn-success form-control">Place Order</button>
                         </div>
                     </div>
