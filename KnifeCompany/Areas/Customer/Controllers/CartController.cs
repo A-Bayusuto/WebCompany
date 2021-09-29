@@ -276,41 +276,41 @@ namespace KnifeCompany.Areas.Customer.Controllers
         [ActionName("Summary")]
         public async Task<IActionResult> SummaryPOST(double total)
         {
-            //var claimsIdentity = (ClaimsIdentity)User.Identity;
-            //var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            //ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
-            //    includeProperties: "Company");
-            //ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value,
-            //    includeProperties: "Product");
+            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
+                includeProperties: "Company");
+            ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == claim.Value,
+                includeProperties: "Product");
 
-            //ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
-            //ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
-            //ShoppingCartVM.OrderHeader.ApplicationId = claim.Value;
-            //ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+            ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
+            ShoppingCartVM.OrderHeader.ApplicationId = claim.Value;
+            ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
 
-            //_unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
-            //_unitOfWork.Save();
+            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            _unitOfWork.Save();
 
-            //List<OrderDetails> orderDetailsList = new List<OrderDetails>();
-            //foreach (var item in ShoppingCartVM.ListCart)
-            //{
-            //    OrderDetails orderDetails = new OrderDetails()
-            //    {
-            //        ProductId = item.ProductId,
-            //        OrderId = ShoppingCartVM.OrderHeader.Id,
-            //        Price = item.Price,
-            //        Count = item.Count
-            //    };
-            //    ShoppingCartVM.OrderHeader.OrderTotal += orderDetails.Count * orderDetails.Price;
-            //    _unitOfWork.OrderDetails.Add(orderDetails);
-            //    _unitOfWork.Save();
-            //}
+            List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+            foreach (var item in ShoppingCartVM.ListCart)
+            {
+                OrderDetails orderDetails = new OrderDetails()
+                {
+                    ProductId = item.ProductId,
+                    OrderId = ShoppingCartVM.OrderHeader.Id,
+                    Price = item.Price,
+                    Count = item.Count
+                };
+                ShoppingCartVM.OrderHeader.OrderTotal += orderDetails.Count * orderDetails.Price;
+                _unitOfWork.OrderDetails.Add(orderDetails);
+                _unitOfWork.Save();
+            }
 
-            //_unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.ListCart);
-            //HttpContext.Session.SetInt32(SD.ssShoppingCart, 0);
+            _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.ListCart);
+            HttpContext.Session.SetInt32(SD.ssShoppingCart, 0);
 
-            //return RedirectToAction("OrderConfirmation", "Cart", new { id = ShoppingCartVM.OrderHeader.Id });
+            return RedirectToAction("OrderConfirmation", "Cart", new { id = ShoppingCartVM.OrderHeader.Id });
             var paypalAPI = new PayPalAPI(_configuration);
             string url = await paypalAPI.getRedirectURLToPayPal(total, "USD");
             return Redirect(url);
@@ -340,12 +340,25 @@ namespace KnifeCompany.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
                 includeProperties: "Company");
 
-            // adds order header to table
+            // adds order header to table and sets variables
 
             ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
             ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
             ShoppingCartVM.OrderHeader.ApplicationId = claim.Value;
             ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+
+            foreach (var list in ShoppingCartVM.ListCart)
+            {
+                list.Price = SD.GetPriceBasedOnQuantity(list.Count, list.Product.Price);
+                ShoppingCartVM.OrderHeader.OrderTotal += (list.Price * list.Count);
+            }
+
+            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
+            ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
+            ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.ApplicationUser.StreetAddress;
+            ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
+            ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.ApplicationUser.State;
+            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
 
             _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();

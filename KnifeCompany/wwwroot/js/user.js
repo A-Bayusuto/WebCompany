@@ -25,8 +25,14 @@ function loadDataTable() {
                     var lockout = new Date(data.lockoutEnd).getTime();
 
                     if (lockout > today) {
-                        // user is locked
+                         //user is locked
                         return `
+                            <div class="text-center">
+                                <a href="/Admin/User/Upsert/${data.id}" class="btn btn-success text-white" style="cursor:pointer">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+
+                            </div>
                             <div class="text-center">
                                 <a onclick=LockUnlock('${data.id}') class="btn btn-danger text-white" style="cursor:pointer">
                                     <i class="fas fa-lock-open"></i> Unlock
@@ -36,6 +42,12 @@ function loadDataTable() {
                     }
                     else {
                         return `
+                            <div class="text-center">
+                                <a href="/Admin/User/Upsert/${data.id}" class="btn btn-success text-white" style="cursor:pointer">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+
+                            </div>
                             <div class="text-center">
                                 <a onclick=LockUnlock('${data.id}') class="btn btn-success text-white" style="cursor:pointer">
                                         <i class="fas fa-lock"></i> Lock

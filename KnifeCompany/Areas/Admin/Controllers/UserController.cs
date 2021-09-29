@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using KnifeCompany.Utility;
+using System.Diagnostics;
 
 namespace KnifeCompany.Areas.Admin.Controllers
 {
@@ -18,10 +19,12 @@ namespace KnifeCompany.Areas.Admin.Controllers
     {
 
         private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserController(ApplicationDbContext db)
+        public UserController(ApplicationDbContext db, IUnitOfWork unitOfWork)
         {
             _db = db;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -30,8 +33,45 @@ namespace KnifeCompany.Areas.Admin.Controllers
             return View();
         }
 
+        public IActionResult Upsert(string id)
+        {
+            ApplicationUser user = new ApplicationUser();         
+            if (id == null)
+            {
+                // this is for create
+                
+                return View(user);
+            }
 
+            user = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+            if (user.Id == null)
+            {
+                return NotFound();
+            }
+            Debug.WriteLine("TESTING input id: " + id);
+            Debug.WriteLine("TESTING user: " + user.Id);
+            return View(user);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Upsert(ApplicationUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                if (user.Id == null)
+                {
+                    _unitOfWork.ApplicationUser.Add(user);
+                }
+                else
+                {
+                    _unitOfWork.ApplicationUser.Update(user);
+                }
+                _unitOfWork.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
 
         #region API CALLS
 

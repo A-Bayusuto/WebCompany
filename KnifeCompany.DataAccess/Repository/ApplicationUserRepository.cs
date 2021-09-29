@@ -17,6 +17,24 @@ namespace KnifeCompany.DataAccess.Repository
             _db = db;
         }
 
+        public void Update(ApplicationUser user)
+        {
+            var objFromDb = _db.ApplicationUsers.FirstOrDefault(s => s.Id == user.Id);
+
+            if (objFromDb != null)
+            {
+
+                objFromDb.Name = user.Name;
+                objFromDb.StreetAddress = user.StreetAddress;
+                objFromDb.City = user.City;
+                objFromDb.State = user.State;
+                objFromDb.PostalCode = user.PostalCode;
+                objFromDb.PhoneNumber = user.PhoneNumber;
+
+            }
+
+
+        }
 
     }
 }

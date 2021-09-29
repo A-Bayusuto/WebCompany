@@ -36,6 +36,7 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" asp-for="@Model.OrderHeader.Name" />
+                                        <span asp-validation-for="@Model.OrderHeader.Name" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -44,6 +45,7 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" asp-for="@Model.OrderHeader.PhoneNumber" />
+                                        <span asp-validation-for="@Model.OrderHeader.PhoneNumber" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -52,6 +54,7 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" asp-for="@Model.OrderHeader.StreetAddress" />
+                                        <span asp-validation-for="@Model.OrderHeader.StreetAddress" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -60,6 +63,7 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" asp-for="@Model.OrderHeader.City" />
+                                        <span asp-validation-for="@Model.OrderHeader.City" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -76,6 +80,7 @@
                                     </div>
                                     <div class="col-9">
                                         <input type="text" class="form-control" asp-for="@Model.OrderHeader.PostalCode" />
+                                        <span asp-validation-for="@Model.OrderHeader.PostalCode" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
@@ -86,7 +91,7 @@
                                 <ul class="list-group mb-3">
                                     @foreach (var item in Model.ListCart)
                                     {
-                                        var itemTotal = item.Product.Price * item.Count;           
+                                        var itemTotal = item.Product.Price * item.Count;
                                         <li class="list-group-item d-flex justify-content-between">
                                             <div>
                                                 <h6 class="my-0">@item.Product.Name</h6>
@@ -123,4 +128,5 @@
 
 @section Scripts{
     <script src="~/js/cart.js"></script>
+    <partial name="_ValidationScriptsPartial" />
 }
