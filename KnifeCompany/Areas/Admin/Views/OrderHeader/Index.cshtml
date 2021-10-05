@@ -1,13 +1,68 @@
 ﻿
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var status = Context.Request.Query["status"];
+
+    var inprocess = "text-primary";
+    var pending = "text-primary";
+    var completed = "text-primary";
+    var rejected = "text-primary";
+    var all = "text-primary";
+
+    switch (status)
+    {
+        case "inprocess":
+            inprocess = "active text-white";
+            break;
+        case "pending":
+            pending = "active text-white";
+            break;
+        case "completed":
+            completed = "active text-white";
+            break;
+        case "rejected":
+            rejected = "active text-white";
+            break;
+        default:
+            all = "active text-white";
+            break;
+    }
 }
 
 <br />
-<div class="row">
-    <div class="col-6">
-        <h2 class="text-primary">Order List </h2>
+<div class="border p-3">
+    <div class="d-flex justify-content-between mb-3">
+        <div class="p-2">
+            <h2 class="text-primary">Order List</h2>
+        </div>
+        <div class="p-2">
+            <ul class="list-group list-group-horizontal-sm">
+                <a style="text-decoration:none;" asp-controller="OrderHeader" asp-action="Index" asp-route-status="pending">
+                <li class="list-group-item @pending">Pending</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="OrderHeader" asp-action="Index" asp-route-status="inprocess">
+                <li class="list-group-item @inprocess">In Process</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="OrderHeader" asp-action="Index" asp-route-status="completed">
+                <li class="list-group-item @completed">Completed</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="OrderHeader" asp-action="Index" asp-route-status="rejected">
+                <li class="list-group-item @rejected">Rejected</li>
+                </a>
+                <a style="text-decoration:none;" asp-controller="OrderHeader" asp-action="Index" asp-route-status="all">
+                <li class="list-group-item @all">All</li>
+                </a>
+            </ul>
+        </div>
     </div>
+</div>
+
+<br />
+<br />
+
+<div class="row">
+
     <div class="col-6 text-right">
         <a class="btn btn-primary" asp-action="Upsert"><i class="fas fa-plus"></i> &nbsp; Create New Category</a>
     </div>
@@ -24,9 +79,6 @@
                 <th>OrderStatus</th>
                 <th>PaymentStatus</th>
                 <th>Name</th>
-                <th>StreetAddress</th>
-                <th>City</th>
-                <th>PostalCode</th>
                 <th>PhoneNumber</th>
                 <th></th>
             </tr>
@@ -34,14 +86,7 @@
     </table>
 </div>
 
-<div class="text-center">
-    <a href="/Admin/OrderHeader/Upsert/id" class="btn btn-success text-white" style="cursor:pointer">
-        <i class="fas fa-edit"></i>
-    </a>
-    <a class="btn btn-danger text-white" style="cursor:pointer">
-        <i class="fas fa-edit"></i>
-    </a>
-</div>
+
 
 
 @section Scripts{

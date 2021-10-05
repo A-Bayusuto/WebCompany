@@ -1,13 +1,34 @@
 ﻿var dataTable;
 
 $(document).ready(function () {
-    loadDataTable();
+    var url = window.location.search;
+    if (url.includes("inprocess")) {
+        loadDataTable("GetOrderList?status=inprocess");
+    }
+    else {
+        if (url.includes("pending")) {
+            loadDataTable("GetOrderList?status=pending");
+        }
+        else {
+            if (url.includes("complete")) {
+                loadDataTable("GetOrderList?status=completed");
+            }
+            else {
+                if (url.includes("rejected")) {
+                    loadDataTable("GetOrderList?status=rejected");
+                }
+                else {
+                    loadDataTable("GetOrderList?status=all");
+                }
+            }
+        }
+    }
 });
 
-function loadDataTable() {
+function loadDataTable(url) {
     dataTable = $('#tblData').DataTable({
         "ajax": {
-            "url": "/Admin/OrderHeader/GetAll"
+            "url": "/Admin/OrderHeader/" + url
         },
         "columns": [
             { "data": "applicationId", "width": "10%" },
@@ -16,11 +37,7 @@ function loadDataTable() {
             { "data": "orderStatus", "width": "10%" },
             { "data": "paymentStatus", "width": "10%" },
             { "data": "name", "width": "10%" },
-            { "data": "streetAddress", "width": "10%" },
-            { "data": "city", "width": "10%" },
-            { "data": "postalCode", "width": "10%" },
             { "data": "phoneNumber", "width": "10%" },
-
             {
                 "data": "id",
                 "render": function (data) {
@@ -34,8 +51,9 @@ function loadDataTable() {
                                 </a>
                             </div>
                             `;
-                }, "width": "30%"
+                }, "width": "40%"
             }
+
         ]
     });
 

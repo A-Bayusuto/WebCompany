@@ -1,0 +1,14 @@
+﻿Status:
+
+- Pending =>		1. Customer made order
+					2. Company has not processed order
+
+- In Progress =>	1. Customer made order
+					2. Company during manufacture and shipping
+
+- Completed =>		1. Customer made order
+					2. Company has shipped
+
+- Rejected =>		1. Customer cancelled
+					2. Order status cancelled by customer or company
+

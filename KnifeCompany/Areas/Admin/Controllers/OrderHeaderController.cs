@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,6 +28,7 @@ namespace KnifeCompany.Areas.Admin.Controllers
         {
             return View();
         }
+
 
         public IActionResult Upsert(int? id)
         {
@@ -70,11 +72,42 @@ namespace KnifeCompany.Areas.Admin.Controllers
 
         #region API CALLS
 
+        //[HttpGet]
+        //public IActionResult GetAll()
+        //{
+        //    var allObj = _unitOfWork.OrderHeader.GetAll();
+        //    return Json(new { data = allObj });
+        //}
+
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetOrderList(string status)
         {
-            var allObj = _unitOfWork.OrderHeader.GetAll();
-            return Json(new { data = allObj });
+            var allObj = _unitOfWork.OrderHeader.GetAll(includeProperties:"ApplicationUser");
+            IEnumerable<OrderHeader> orderList;
+            Debug.WriteLine("Status value: " + status);
+
+            switch (status)
+            {
+                case "inprocess":
+                    orderList = allObj.Where(o => o.OrderStatus == SD.StatusInProcess);
+                    break;
+                case "pending":
+                    orderList = allObj.Where(o => o.OrderStatus == SD.StatusPending);
+                    break;
+                case "completed":
+                    orderList = allObj.Where(o => o.OrderStatus == SD.StatusShipped);
+                    break;
+                case "rejected":
+                    orderList = allObj.Where(o => o.OrderStatus == SD.StatusCancelled ||
+                                                    o.OrderStatus == SD.StatusRefunded ||
+                                                    o.PaymentStatus == SD.PaymentStatusRejected);
+                    break;
+                default:
+                    orderList = allObj;
+                    break;
+            }
+
+            return Json(new { data = orderList });
         }
 
         [HttpDelete]
