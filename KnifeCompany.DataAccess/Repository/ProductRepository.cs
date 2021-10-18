@@ -33,7 +33,7 @@ namespace KnifeCompany.DataAccess.Repository
                 objFromDb.Price = product.Price;
                 objFromDb.Status = product.Status;
                 objFromDb.Description = product.Description;
-                objFromDb.Category = product.Category;
+                objFromDb.CategoryId = product.CategoryId;
 
             }
 
