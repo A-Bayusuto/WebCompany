@@ -200,7 +200,7 @@ NOT
 To reset:
 1. Delete Database on sql server
 2. Delete migrations
-3. Rebuild
+3. Rebuild (Run Add-Migration Initial again - then Update-Database)
 
 To create Admin:
 1. Add any user => initially roles are not created yet. will be made after first register

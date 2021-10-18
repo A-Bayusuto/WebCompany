@@ -1,6 +1,6 @@
 ﻿function register() {
     alert('Check your email');
-    return false;
+    return true;
 }
 
 function calc_price(price, count) {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -113,11 +114,19 @@ namespace KnifeCompany.Areas.Admin.Controllers
 
                 if (productVM.Product.Id == 0)
                 {
+                    Debug.WriteLine("product Name:" + productVM.Product.Name);
+                    Debug.WriteLine("product Price:" + productVM.Product.Price);
+                    Debug.WriteLine("product CategoryId:" + productVM.Product.CategoryId);
+                    Debug.WriteLine("product Category Name:" + productVM.Product.Category.Name);
                     _unitOfWork.Product.Add(productVM.Product);
                 }
 
                 else
                 {
+                    Debug.WriteLine("product Name:" + productVM.Product.Name);
+                    Debug.WriteLine("product Price:" + productVM.Product.Price);
+                    Debug.WriteLine("product CategoryId:" + productVM.Product.CategoryId);
+                    //Debug.WriteLine("product Category Name:" + productVM.Product.Category.Name);
                     _unitOfWork.Product.Update(productVM.Product);
                 }
                 _unitOfWork.Save();

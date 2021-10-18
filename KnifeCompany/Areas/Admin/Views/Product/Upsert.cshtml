@@ -54,10 +54,11 @@
                     <label>Category</label>
                 </div>
                 <div class="col-8">
-                    @Html.DropDownListFor(m => m.Product.CategoryId, Model.CategoryList ?? new List<SelectListItem>(), "- Select a Category,",
+                    @Html.DropDownListFor(m => m.Product.CategoryId, Model.CategoryList, "- Select a Category",
                    new { @class = "form-control" })
                     <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
                 </div>
+
 
                 <div class="col-4">
                     <label>Picture/Image</label>

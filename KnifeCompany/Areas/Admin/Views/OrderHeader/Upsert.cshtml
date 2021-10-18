@@ -17,65 +17,73 @@
             <h2 class="text-primary">@title</h2>
         </div>
         <div class="col-8 pt-4">
+
             <div class="form-group row">
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="ApplicationId"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="ApplicationId" class="form-control" readonly />
-                        <span asp-validation-for="ApplicationId" class="text-danger"></span>
-                    </div>
+                <div class="col-4">
+                    <label asp-for="ApplicationId"></label>
                 </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="OrderDate"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="OrderDate" class="form-control" readonly />
-                        <span asp-validation-for="OrderDate" class="text-danger"></span>
-                    </div>
+                <div class="col-8">
+                    <input asp-for="ApplicationId" class="form-control" readonly />
+                    <span asp-validation-for="ApplicationId" class="text-danger"></span>
                 </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="OrderTotal"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="OrderTotal" class="form-control" readonly />
-                        <span asp-validation-for="OrderTotal" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="OrderStatus"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="OrderStatus" class="form-control" />
-                        <span asp-validation-for="OrderStatus" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label>PaymentStatus</label>
-                    </div>
-                    <div class="col-8">
-                        @Html.DropDownListFor(x => x.PaymentStatus, new[] {
-                            new SelectListItem() {Text = "Pending", Value = "Pending"},
-                            new SelectListItem() {Text = "Approved", Value = "Approved"},
-                            new SelectListItem() {Text = "Rejected", Value = "Rejected"},
-                        })
-
-                    </div>
-                </div>
-
-
-
             </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="OrderDate"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="OrderDate" class="form-control" readonly />
+                    <span asp-validation-for="OrderDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="OrderTotal"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="OrderTotal" class="form-control" readonly />
+                    <span asp-validation-for="OrderTotal" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="OrderStatus"></label>
+                </div>
+                @*<div class="col-8" asp-for="OrderStatus">
+                @Html.DropDownListFor(x => x.OrderStatus, new[] {
+                    new SelectListItem() {Text = "Pending", Value = "pending"},
+                    new SelectListItem() {Text = "Processing", Value = "inprocess"},
+                    new SelectListItem() {Text = "Completed", Value = "complete"},
+                    new SelectListItem() {Text = "Rejected", Value = "rejected"},
+                })
+
+                </div>*@
+                <select class="form-control">
+                    <option>pending</option>
+                    <option>inprocess</option>
+                    <option>complete</option>
+                    <option>rejected</option>
+                </select>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label>PaymentStatus</label>
+                </div>
+                <div class="col-8">
+                    @Html.DropDownListFor(x => x.PaymentStatus, new[] {
+                        new SelectListItem() {Text = "Pending", Value = "Pending"},
+                        new SelectListItem() {Text = "Approved", Value = "Approved"},
+                        new SelectListItem() {Text = "Rejected", Value = "Rejected"},
+                    })
+
+                </div>
+            </div>
+
+
             <div class="form-group row">
                 <div class="col-8 offset-4">
                     @if (Model.Id != 0)
@@ -92,6 +100,7 @@
         </div>
     </div>
 </form>
+
 
 
 @section Scripts{

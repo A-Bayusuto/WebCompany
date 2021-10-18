@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -96,7 +97,9 @@ namespace KnifeCompany.Areas.Customer.Controllers
                 pageHandler: null,
                 values: new { area = "Identity", userId = user.Id, code = code },
                 protocol: Request.Scheme);
-
+            Debug.WriteLine("============================================================");
+            Debug.WriteLine("email sent to : " + user.Email);
+            Debug.WriteLine("============================================================");
             await _emailSender.SendEmailAsync(user.Email, "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
@@ -359,6 +362,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
         {
             return View();
         }
+
 
     }
 }
