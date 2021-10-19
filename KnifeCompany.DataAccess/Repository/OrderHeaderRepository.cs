@@ -20,6 +20,17 @@ namespace KnifeCompany.DataAccess.Repository
 
         public void Update(OrderHeader obj)
         {
+            //var objFromDb = _db.OrderHeaders.FirstOrDefault(s => s.ApplicationId == obj.ApplicationId);
+
+            //if (objFromDb != null)
+            //{
+            //    objFromDb.ApplicationId = obj.OrderStatus;
+            //    objFromDb.OrderDate = obj.OrderDate;
+            //    objFromDb.OrderTotal = obj.OrderTotal;
+            //    objFromDb.OrderStatus = obj.OrderStatus;
+            //    objFromDb.PaymentStatus = obj.PaymentStatus;
+
+            //}
             _db.Update(obj);
         }
     }
