@@ -277,10 +277,22 @@ namespace KnifeCompany.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Summary")]
-        public async Task<IActionResult> SummaryPOST(double total)
+        public async Task<IActionResult> SummaryPOST(double total, ShoppingCartVM shoppingCartVM)
         {
             var paypalAPI = new PayPalAPI(_configuration);
             string url = await paypalAPI.getRedirectURLToPayPal(total, "USD");
+
+            Debug.WriteLine("==============  Order Header ============");
+            Debug.WriteLine("OrderHeader.Name : " + shoppingCartVM.OrderHeader.Name);
+            Debug.WriteLine("OrderHeader.PhoneNumber : " + shoppingCartVM.OrderHeader.PhoneNumber);
+            Debug.WriteLine("OrderHeader.StreetAddress : " + shoppingCartVM.OrderHeader.StreetAddress);
+            Debug.WriteLine("OrderHeader.City : " + shoppingCartVM.OrderHeader.City);
+            Debug.WriteLine("OrderHeader.State : " + shoppingCartVM.OrderHeader.State);
+            Debug.WriteLine("OrderHeader.PostalCode : " + shoppingCartVM.OrderHeader.PostalCode);
+            Debug.WriteLine("=========================================");
+
+            HttpContext.Session.SetObject("shoppingcart", shoppingCartVM);
+
             return Redirect(url);
 
         }
@@ -297,6 +309,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            ShoppingCartVM shoppingCartVM = HttpContext.Session.GetObject<ShoppingCartVM>("shoppingcart");
 
             ShoppingCartVM = new ShoppingCartVM()
             {
@@ -304,6 +317,8 @@ namespace KnifeCompany.Areas.Customer.Controllers
                 ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value,
                     includeProperties: "Product")
             };
+
+
 
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value,
                 includeProperties: "Company");
@@ -321,12 +336,14 @@ namespace KnifeCompany.Areas.Customer.Controllers
                 ShoppingCartVM.OrderHeader.OrderTotal += (list.Price * list.Count);
             }
 
-            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
-            ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
-            ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.ApplicationUser.StreetAddress;
-            ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
-            ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.ApplicationUser.State;
-            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
+            ShoppingCartVM.OrderHeader.Name = shoppingCartVM.OrderHeader.Name;
+            ShoppingCartVM.OrderHeader.PhoneNumber = shoppingCartVM.OrderHeader.PhoneNumber;
+            ShoppingCartVM.OrderHeader.StreetAddress = shoppingCartVM.OrderHeader.StreetAddress;
+            ShoppingCartVM.OrderHeader.City = shoppingCartVM.OrderHeader.City;
+            ShoppingCartVM.OrderHeader.State = shoppingCartVM.OrderHeader.State;
+            ShoppingCartVM.OrderHeader.PostalCode = shoppingCartVM.OrderHeader.PostalCode;
+
+
 
             _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
@@ -343,7 +360,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
                     Price = item.Price,
                     Count = item.Count
                 };
-                ShoppingCartVM.OrderHeader.OrderTotal += orderDetails.Count * orderDetails.Price;
+                ShoppingCartVM.OrderHeader.OrderTotal = orderDetails.Count * orderDetails.Price;
                 _unitOfWork.OrderDetails.Add(orderDetails);
                 _unitOfWork.Save();
             }

@@ -327,4 +327,13 @@ $"v1/payments/payment/{paymentId}/execute"
 ==================================================================================================================================
 ==================================================================================================================================
 
+Cookies:
 
+            HttpContext.Response.Cookies.Append("name", shoppingCartVM.OrderHeader.Name, new Microsoft.AspNetCore.Http.CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(1),
+            });
+
+Session:
+
+HttpContext.Current.Session.Add("__MySessionObject", new MySessionObject());
