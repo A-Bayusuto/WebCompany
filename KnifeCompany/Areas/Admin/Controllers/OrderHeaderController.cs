@@ -139,7 +139,7 @@ namespace KnifeCompany.Areas.Admin.Controllers
                     orderList = allObj.Where(o => o.OrderStatus == SD.StatusPending && o.PaymentStatus != SD.PaymentStatusRejected);
                     break;
                 case "completed":
-                    orderList = allObj.Where(o => o.OrderStatus == SD.StatusShipped && o.PaymentStatus != SD.PaymentStatusRejected);
+                    orderList = allObj.Where(o => o.OrderStatus == SD.StatusCompleted && o.PaymentStatus == SD.PaymentStatusApproved);
                     break;
                 case "rejected":
                     orderList = allObj.Where(o => o.OrderStatus == SD.StatusCancelled ||
