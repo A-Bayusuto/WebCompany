@@ -289,6 +289,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
             Debug.WriteLine("OrderHeader.City : " + shoppingCartVM.OrderHeader.City);
             Debug.WriteLine("OrderHeader.State : " + shoppingCartVM.OrderHeader.State);
             Debug.WriteLine("OrderHeader.PostalCode : " + shoppingCartVM.OrderHeader.PostalCode);
+            //Debug.WriteLine("OrderHeader.OrderTotal : " + shoppingCartVM.OrderHeader.OrderTotal);
             Debug.WriteLine("=========================================");
 
             HttpContext.Session.SetObject("shoppingcart", shoppingCartVM);
@@ -344,6 +345,15 @@ namespace KnifeCompany.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.PostalCode = shoppingCartVM.OrderHeader.PostalCode;
 
 
+            Debug.WriteLine("==============  Success Order Header ============");
+            Debug.WriteLine("OrderHeader.Name : " + ShoppingCartVM.OrderHeader.Name);
+            Debug.WriteLine("OrderHeader.PhoneNumber : " + ShoppingCartVM.OrderHeader.PhoneNumber);
+            Debug.WriteLine("OrderHeader.StreetAddress : " + ShoppingCartVM.OrderHeader.StreetAddress);
+            Debug.WriteLine("OrderHeader.City : " + ShoppingCartVM.OrderHeader.City);
+            Debug.WriteLine("OrderHeader.State : " + ShoppingCartVM.OrderHeader.State);
+            Debug.WriteLine("OrderHeader.PostalCode : " + ShoppingCartVM.OrderHeader.PostalCode);
+            Debug.WriteLine("OrderHeader.OrderTotal : " + ShoppingCartVM.OrderHeader.OrderTotal);
+            Debug.WriteLine("=========================================");
 
             _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
@@ -360,7 +370,7 @@ namespace KnifeCompany.Areas.Customer.Controllers
                     Price = item.Price,
                     Count = item.Count
                 };
-                ShoppingCartVM.OrderHeader.OrderTotal = orderDetails.Count * orderDetails.Price;
+                //ShoppingCartVM.OrderHeader.OrderTotal = orderDetails.Count * orderDetails.Price; HOW THE FUCK DID THIS EFFECT THE PREVIOUS ADD
                 _unitOfWork.OrderDetails.Add(orderDetails);
                 _unitOfWork.Save();
             }
