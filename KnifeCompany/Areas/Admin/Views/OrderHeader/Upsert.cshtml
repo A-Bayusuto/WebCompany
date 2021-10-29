@@ -112,31 +112,30 @@
                 <div class="row container">
                     <div class="col-8">
                         <h6 class="my-0">@order.Product.Name</h6>
+                        <br />
                         <img src="@order.Product.Picture" class="card-img-top rounded" style="width:50%;height:80%;" />
                         <br />
                         <br />
+                        <br />
 
-                        <small class="text-muted">Price : @order.Price</small>
-                        <small class="text-muted">Quantity : @order.Count</small>
                     </div>
                     <div class="col-4">
-                        <h5 class="text-success">@order.Price*@order.Count</h5>
+                        @{ 
+                            var total = order.Price * order.Count;
+                        }
+                        <h5 class="text-success">@order.Price.ToString("c") * @order.Count = @total.ToString("c")</h5>
                     </div>
                 </div>
             </li>
         }
-        <br />
-        <br />
-        <br />
+
 
         <li class="list-group-item bg-info">
             <div class="row container">
                 <div class="col-6">
-                    <h5 class="text-white">TOTAL : @Model.OrderHeader.OrderTotal</h5>
+                    <h5 class="text-white">TOTAL : @Model.OrderHeader.OrderTotal.ToString("c")</h5>
                 </div>
-                <div class="col-6 text-right">
-                    <h5 class="text-white">--GRAND TOTAL-</h5>
-                </div>
+
             </div>
         </li>
     </ul>
