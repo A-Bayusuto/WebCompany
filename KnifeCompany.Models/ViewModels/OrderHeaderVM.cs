@@ -9,6 +9,7 @@ namespace KnifeCompany.Models.ViewModels
     {
 
         public OrderHeader OrderHeader { get; set; }
+        public List<OrderDetails> OrderDetailsList { get; set; }
         public IEnumerable<SelectListItem> OrderStatusList { get; set; }
         public IEnumerable<SelectListItem> PaymentStatusList { get; set; }
 

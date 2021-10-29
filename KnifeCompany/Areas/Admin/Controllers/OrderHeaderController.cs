@@ -1,4 +1,5 @@
-﻿using KnifeCompany.DataAccess.Repository.IRepository;
+﻿using KnifeCompany.DataAccess.Data;
+using KnifeCompany.DataAccess.Repository.IRepository;
 using KnifeCompany.Models;
 using KnifeCompany.Models.ViewModels;
 using KnifeCompany.Utility;
@@ -17,11 +18,12 @@ namespace KnifeCompany.Areas.Admin.Controllers
     [Authorize(Roles = SD.Role_Admin)]
     public class OrderHeaderController : Controller
     {
-
+        private readonly ApplicationDbContext _db;
         private readonly IUnitOfWork _unitOfWork;
 
-        public OrderHeaderController(IUnitOfWork unitOfWork)
+        public OrderHeaderController(ApplicationDbContext db, IUnitOfWork unitOfWork)
         {
+            _db = db;
             _unitOfWork = unitOfWork;
         }
 
@@ -49,6 +51,7 @@ namespace KnifeCompany.Areas.Admin.Controllers
             OrderHeaderVM orderHeaderVM = new OrderHeaderVM()
             {
                 OrderHeader = new OrderHeader(),
+                OrderDetailsList = new List<OrderDetails>(),
                 OrderStatusList = orderStatusList,
                 PaymentStatusList = paymentStatusList
             };
@@ -60,6 +63,8 @@ namespace KnifeCompany.Areas.Admin.Controllers
             }
             // this is for edit
             orderHeaderVM.OrderHeader = _unitOfWork.OrderHeader.Get(id.GetValueOrDefault());
+            orderHeaderVM.OrderDetailsList = _unitOfWork.OrderDetails.GetAll(x => x.OrderId == orderHeaderVM.OrderHeader.Id, includeProperties:"Product").ToList();
+
             if (orderHeaderVM == null)
             {
                 return NotFound();
